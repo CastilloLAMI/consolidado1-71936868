@@ -22,6 +22,7 @@ class Planeta:
 if __name__ == "__main__":
     tierra = Planeta(nombre="Tierra", masa=5.972e24, radio=6371000, distancia_al_sol=1.0, tiene_vida=True)
     jupiter = Planeta(nombre="Júpiter", masa=1.898e27, radio=69911000, distancia_al_sol=5.2, tiene_vida=False)
+    
 
     print(tierra)
     print(jupiter)
