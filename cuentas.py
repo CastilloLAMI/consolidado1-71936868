@@ -21,3 +21,15 @@ class CuentaBancaria:
 
     def __str__(self) -> str:
         return f"Cuenta N°: {self.numero_cuenta} | Titular: {self.titular} | Saldo: S/ {self._saldo:.2f}"
+
+class CuentaAhorros(CuentaBancaria):
+    def __init__(self, numero_cuenta: str, titular: str, tasa_interes: float, saldo_inicial: float = 0.0):
+        super().__init__(numero_cuenta, titular, saldo_inicial)
+        self.tasa_interes = tasa_interes
+
+    def calcular_interes(self) -> float:
+        return self._saldo * (self.tasa_interes / 100)
+
+    def __str__(self) -> str:
+        interes = self.calcular_interes()
+        return f"{super().__str__()} | Tasa Interés: {self.tasa_interes}% | Interés Anual: S/ {interes:.2f}"
