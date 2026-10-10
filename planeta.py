@@ -16,3 +16,41 @@ class Planeta:
     def es_planeta_exterior(self) -> bool:
         """Retorna True si la distancia media al Sol es mayor a 5.2 UA, False en caso contrario."""
         return self.distancia_al_sol > 5.2
+
+    def __str__(self) -> str:
+        tipo = "Exterior" if self.es_planeta_exterior() else "Interior"
+        densidad = self.calcular_densidad()
+        vida = "SÃ­" if self.tiene_vida else "No"
+        return (f"Planeta: {self.nombre} | Tipo: {tipo} | "
+                f"Densidad: {densidad:.2f} kg/mÂ³ | "
+                f"Distancia al Sol: {self.distancia_al_sol} UA | Tiene vida: {vida}")
+
+if __name__ == "__main__":
+    tierra = Planeta(
+        nombre="Tierra",
+        masa=5.972e24,
+        radio=6.371e6,
+        distancia_al_sol=1.0,
+        tiene_vida=True
+    )
+
+    jupiter = Planeta(
+        nombre="JÃºpiter",
+        masa=1.898e27,
+        radio=6.9911e7,
+        distancia_al_sol=5.204,
+        tiene_vida=False
+    )
+
+    marte = Planeta(
+        nombre="Marte",
+        masa=6.417e23,
+        radio=3.3895e6,
+        distancia_al_sol=1.524,
+        tiene_vida=False
+    )
+
+    print("=== INFORMACIÃ“N DE PLANETAS ===")
+    print(tierra)
+    print(jupiter)
+    print(marte)
