@@ -27,3 +27,20 @@ class CuentaBancaria:
 
     def __str__(self) -> str:
         return f"Cuenta: {self.numero_cuenta} | Titular: {self.titular} | Saldo: ${self.__saldo:.2f}"
+
+
+class CuentaAhorros(CuentaBancaria):
+    def __init__(self, numero_cuenta: str, titular: str, tasa_interes: float = 0.0, saldo_inicial: float = 0.0):
+        super().__init__(numero_cuenta, titular, saldo_inicial)
+        if tasa_interes < 0:
+            raise ValueError(f"La tasa de interés no puede ser negativa. Tasa ingresada: {tasa_interes}")
+        self.tasa_interes = float(tasa_interes)
+
+    def calcular_interes(self) -> float:
+        """Calcula el interés anual basado en el saldo actual. Fórmula: saldo * tasa / 100"""
+        return self.consultar_saldo() * self.tasa_interes / 100.0
+
+    def __str__(self) -> str:
+        interes_calculado = self.calcular_interes()
+        return (f"{super().__str__()} | Tasa Interés: {self.tasa_interes:.1f}% | "
+                f"Interés Anual: ${interes_calculado:.2f}")
