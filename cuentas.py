@@ -44,3 +44,69 @@ class CuentaAhorros(CuentaBancaria):
         interes_calculado = self.calcular_interes()
         return (f"{super().__str__()} | Tasa Interés: {self.tasa_interes:.1f}% | "
                 f"Interés Anual: ${interes_calculado:.2f}")
+
+
+class CuentaCorriente(CuentaBancaria):
+    def __init__(self, numero_cuenta: str, titular: str, limite_sobregiro: float = 0.0, saldo_inicial: float = 0.0):
+        super().__init__(numero_cuenta, titular, saldo_inicial)
+        if limite_sobregiro < 0:
+            raise ValueError(f"El límite de sobregiro no puede ser negativo. Límite ingresado: {limite_sobregiro}")
+        self.limite_sobregiro = float(limite_sobregiro)
+
+    def retirar(self, monto: float):
+        """Sobreescribe retirar permitiendo sobregiro hasta saldo + limite_sobregiro."""
+        if monto <= 0:
+            raise ValueError(f"El monto a retirar debe ser mayor a 0. Monto ingresado: {monto}")
+        saldo_actual = self.consultar_saldo()
+        disponible = saldo_actual + self.limite_sobregiro
+        if monto > disponible:
+            raise ValueError(
+                f"Límite de sobregiro excedido. Saldo disponible con sobregiro: ${disponible:.2f}, "
+                f"Monto solicitado: ${monto:.2f}"
+            )
+        self._ajustar_saldo(saldo_actual - float(monto))
+
+    def permite_sobregiro(self) -> bool:
+        """Retorna True si el saldo actual es negativo, False si no."""
+        return self.consultar_saldo() < 0
+
+    def __str__(self) -> str:
+        en_sobregiro = "Sí" if self.permite_sobregiro() else "No"
+        return (f"{super().__str__()} | Límite Sobregiro: ${self.limite_sobregiro:.2f} | "
+                f"En Sobregiro: {en_sobregiro}")
+
+
+if __name__ == "__main__":
+    print("=== PRUEBA DE CUENTA DE AHORROS ===")
+    ahorros = CuentaAhorros(numero_cuenta="AH-1001", titular="Ivan Castillo", tasa_interes=4.5)
+    ahorros.depositar(1000.0)
+    print(ahorros)
+
+    print("\n--- Operaciones en Cuenta de Ahorros ---")
+    ahorros.depositar(500.0)
+    print(f"Depósito de $500.00 realizado -> Saldo actual: ${ahorros.consultar_saldo():.2f}")
+    ahorros.retirar(200.0)
+    print(f"Retiro de $200.00 realizado -> Saldo actual: ${ahorros.consultar_saldo():.2f}")
+    interes = ahorros.calcular_interes()
+    print(f"Interés generado anual: ${interes:.2f}")
+    print(ahorros)
+
+    print("\n=== PRUEBA DE CUENTA CORRIENTE ===")
+    corriente = CuentaCorriente(numero_cuenta="CC-2002", titular="Ramiro Mamani", limite_sobregiro=200.0)
+    corriente.depositar(300.0)
+    print(corriente)
+
+    print("\n--- Operaciones en Cuenta Corriente ---")
+    corriente.depositar(100.0)
+    print(f"Depósito de $100.00 realizado -> Saldo actual: ${corriente.consultar_saldo():.2f}")
+    print("Retirando $550.00 (utilizando sobregiro)...")
+    corriente.retirar(550.0)
+    print(f"Saldo tras retiro: ${corriente.consultar_saldo():.2f}")
+    print(f"¿Está en sobregiro? {corriente.permite_sobregiro()}")
+    print(corriente)
+
+    print("\n--- Intento de retiro que supera el límite de sobregiro ---")
+    try:
+        corriente.retirar(100.0)
+    except ValueError as e:
+        print(f"Excepción capturada correctamente: {e}")
