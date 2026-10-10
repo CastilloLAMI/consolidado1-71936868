@@ -7,6 +7,7 @@ class CuentaBancaria:
         self.__saldo = float(saldo_inicial)
 
     def depositar(self, monto: float):
+        # Hotfix: corrección urgente - validar que el monto de depósito sea positivo
         if monto <= 0:
             raise ValueError(f"El monto a depositar debe ser mayor a 0. Monto ingresado: {monto}")
         self.__saldo += float(monto)
